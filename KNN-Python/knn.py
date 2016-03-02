@@ -1,26 +1,16 @@
 import random
-
 import math
-
 import sys
-
 import itertools
 
 
 class KNN(object):
     def __init__(self, features):
         self.features = features
-        self.features_lists_by_class = self._create_lists()
         self.folds = None
 
-    def _create_lists(self):
-        result = {}
-        for feature in self.features:
-            if feature.feature_class in result:
-                result[feature.feature_class].append(feature.values)
-            else:
-                result[feature.feature_class] = [feature.values]
-        return result
+    def knn(self, validation_features, test_features):
+        pass
 
     def cross_validate(self, k=3):
         """
@@ -28,8 +18,9 @@ class KNN(object):
         :param k: how many folds to create
         """
         self.folds = self._create_folds(k)
-
-        itertools.permutations()
+        combs = itertools.combinations(self.folds, k)
+        results = [self.knn(comb[0], comb[1:]) for comb in combs]
+        return results
 
     def _create_folds(self, k):
         """
@@ -37,20 +28,15 @@ class KNN(object):
         :return: list of tuples (feature_class, list of k-lists)
         """
 
-        result = []
-        for feature_class, features in self.features_lists_by_class.items():
-            randomized = random.sample(features, len(features))
+        randomized = random.sample(self.features, len(self.features))
+        chunk_size = math.ceil(len(randomized)/k)
+        last_chunk_size = len(randomized) - chunk_size * (k-1)
+        folds = [randomized[i*chunk_size: (i+1)*chunk_size] for i in range(k-1)]
+        folds.append(randomized[-last_chunk_size:])
+        try:
+            assert sum([len(l) for l in folds]) == len(randomized)
+        except AssertionError:
+            print("Chunks size don't sum up to length of original list")
+            sys.exit()
 
-            chunk_size = math.ceil(len(randomized)/k)
-            last_chunk_size = len(randomized) - chunk_size * (k-1)
-
-            lists = [randomized[i*chunk_size: (i+1)*chunk_size] for i in range(k-1)]
-            lists.append(randomized[-last_chunk_size:])
-            try:
-                assert sum([len(l) for l in lists]) == len(randomized)
-            except AssertionError:
-                print("Chunks size don't sum up to length of original list")
-                sys.exit()
-
-            result.append((feature_class, lists))
-        return result
+        return folds
