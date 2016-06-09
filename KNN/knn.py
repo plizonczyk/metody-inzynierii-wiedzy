@@ -2,6 +2,7 @@ import random
 import math
 import sys
 import itertools
+from pprint import pprint
 
 
 class KNN(object):
@@ -9,17 +10,20 @@ class KNN(object):
         self.features = features
         self.folds = None
 
-    def knn(self, validation_features, test_features):
+    def knn(self, validation_features, test_features, k=3):
         pass
 
-    def cross_validate(self, k=3):
+    def cross_validate(self, method=knn, n=3, k=3):
         """
-        Test set using k-fold cross validation
-        :param k: how many folds to create
+        Test set using n-fold cross validation with kNN method
+        :param method: method to use (knn or weighted_knn)
+        :param n: how many folds to create
+        :param k: parameter for kNN
         """
-        self.folds = self._create_folds(k)
-        combs = itertools.combinations(self.folds, k)
-        results = [self.knn(comb[0], comb[1:]) for comb in combs]
+        self.folds = self._create_folds(n)
+        for i in range(len(self.folds)):
+            
+
         return results
 
     def _create_folds(self, k):

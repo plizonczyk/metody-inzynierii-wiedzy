@@ -3,7 +3,7 @@ from csv import DictReader
 from .feature import Feature
 from .knn import KNN
 
-data_file = 'KNN-Python/data.txt'
+data_file = 'KNN/data.txt'
 
 features = []
 
