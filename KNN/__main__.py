@@ -13,4 +13,5 @@ with open(data_file, newline='') as data:
         features.append(Feature(row, 'class'))
 
     knn_classifier = KNN(features)
-    knn_classifier.cross_validate()
+    result, __ = knn_classifier.cross_validate()
+    print("Overall KNN accuracy:", result)

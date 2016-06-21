@@ -2,18 +2,32 @@ import random
 import math
 import sys
 import itertools
-from pprint import pprint
+import collections
 
 
 class KNN(object):
+    _euclidean = lambda __self, x: abs(x[0] - x[1])
+
     def __init__(self, features):
         self.features = features
         self.folds = None
+        self.distance_method = self._euclidean
 
-    def knn(self, validation_features, test_features, k=3):
-        pass
+    def knn(self, validation_set, training_set, k=3):
+        results = []
+        for feature in validation_set:
+            # create list of tuples in format (distance, referenced feature's class) then sort it
+            distances = [(sum(map(self.distance_method, zip(feature.values, training_feature.values))),
+                          training_feature.feature_class) for training_feature in training_set]
+            distances.sort(key=lambda x: x[0])
 
-    def cross_validate(self, method=knn, n=3, k=3):
+            # pick k lowest distances then extract feature classes and pick the most common one (arbitrary if equal)
+            distances = [x[1] for x in distances[0:k]]
+            most_common_class = collections.Counter(distances).most_common(1)[0][0]
+            results.append((feature, most_common_class))
+        return results
+
+    def cross_validate(self, n=3, k=3):
         """
         Test set using n-fold cross validation with kNN method
         :param method: method to use (knn or weighted_knn)
@@ -21,10 +35,19 @@ class KNN(object):
         :param k: parameter for kNN
         """
         self.folds = self._create_folds(n)
-        for i in range(len(self.folds)):
-            
+        full_results = []
+        accuracies = []
+        for validation_set in self.folds:
+            # exclude validation set from training sets
+            training_set = list(itertools.chain(*[x for x in self.folds if x != validation_set]))
+            results = self.knn(validation_set, training_set, k)
+            full_results.append(results)
 
-        return results
+            accurate_hits = sum(1 if x[0].feature_class == x[1] else 0 for x in results)
+            accuracies.append(accurate_hits / len(results))
+
+        overall_accuracy = sum(accuracies) / len(accuracies)
+        return overall_accuracy, full_results
 
     def _create_folds(self, k):
         """
