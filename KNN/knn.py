@@ -6,8 +6,6 @@ import collections
 
 
 class KNN(object):
-    _euclidean = lambda __self, x: abs(x[0] - x[1])
-
     def __init__(self, features):
         self.features = features
         self.folds = None
@@ -17,8 +15,8 @@ class KNN(object):
         results = []
         for feature in validation_set:
             # create list of tuples in format (distance, referenced feature's class) then sort it
-            distances = [(sum(map(self.distance_method, zip(feature.values, training_feature.values))),
-                          training_feature.feature_class) for training_feature in training_set]
+            distances = [(self.distance_method(feature.values, training_feature.values), training_feature.feature_class)
+                         for training_feature in training_set]
             distances.sort(key=lambda x: x[0])
 
             # pick k lowest distances then extract feature classes and pick the most common one (arbitrary if equal)
@@ -67,3 +65,9 @@ class KNN(object):
             sys.exit()
 
         return folds
+
+    def _euclidean(self, x, y):
+        distance = 0
+        for val1, val2 in zip(x, y):
+            distance += (val1 - val2)**2
+        return math.sqrt(distance)
