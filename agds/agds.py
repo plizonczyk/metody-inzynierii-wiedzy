@@ -24,3 +24,4 @@ class AGDS(object):
             id_node = Node(feature.feature_id)
             for key, value in feature.data_dict.items():
                 self.root.get(key).add(key, Node(value), final_node=id_node)
+            self.root.get('class').add(feature.feature_class, Node(feature.feature_class), final_node=id_node)
