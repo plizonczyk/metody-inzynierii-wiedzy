@@ -17,7 +17,9 @@ class Feature(object):
 
     def _prepare_values(self):
         try:
-            return [float(val) for val in self.data_dict.values()]
+            for key in self.data_dict:
+                self.data_dict[key] = float(self.data_dict[key])
         except ValueError:
             print("Invalid data format - failed on float conversion")
             sys.exit()
+        return self.data_dict.values()

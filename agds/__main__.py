@@ -23,6 +23,6 @@ for fieldname in reader.fieldnames:
 for feature in features:
     id_node = Node(feature.feature_id)
     for key, value in feature.data_dict.items():
-        root.get(key)[0].add(key, Node(value), final_node=id_node)
+        root.get(key).add(key, Node(value), final_node=id_node)
 
 import ipdb; ipdb.set_trace()
