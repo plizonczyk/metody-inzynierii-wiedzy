@@ -4,7 +4,6 @@ from pprint import pprint
 class Node(object):
     def __init__(self, value):
         self.connections = {}
-        self.plain_values = []
         self.value = value
 
     def __repr__(self):
