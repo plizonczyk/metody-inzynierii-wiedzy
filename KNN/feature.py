@@ -1,6 +1,8 @@
 import sys
 import itertools
 
+import math
+
 
 class Feature(object):
     cnt = itertools.count(0)
@@ -23,3 +25,9 @@ class Feature(object):
             print("Invalid data format - failed on float conversion")
             sys.exit()
         return self.data_dict.values()
+
+    def euclidean_to_values(self, values_dict):
+        sum = 0
+        for key, value in values_dict.items():
+            sum += (self.data_dict[key] - value)**2
+        return math.sqrt(sum)
